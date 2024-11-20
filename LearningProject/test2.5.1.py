@@ -1,4 +1,5 @@
 import torch
+from torch.nn.init import xavier_uniform
 
 x = torch.arange(4.0)
 x.requires_grad_(True)
@@ -64,5 +65,28 @@ y=xi*xi,所以y对于x的梯度为2xi,
 '''
 x.grad
 print(x.grad)
+
+'''
+分离计算，即z是y与x的函数，y又是x的函数，有时需要将y视作常数，只考虑y
+我们分离y返回一个u,u的值和y相同，梯度不会经由u流向x
+'''
+x.grad.zero_()
+y = x*x
+u = y.detach()
+z = u*x
+
+z.sum().backward()
+print(x.grad)
+#结果为tensor([0., 1., 4., 9.])，证明此时z对x的偏导为u,而不是3x^2
+print(u)
+#结果为tensor([0., 1., 4., 9.])
+print(x.grad == u)
+
+x.grad.zero_()
+y.sum().backward()
+'''
+同样的这里y也只是x的直接相乘，无法直接反向，选择sum后再反向
+'''
+print(x.grad == 2*x)
 
 
