@@ -63,6 +63,3 @@ lr = 0.03
 num_epochs = 3
 net = linreg
 loss = square_loss
-
-for epochs in range(num_epochs):
-    
